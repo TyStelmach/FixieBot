@@ -1,0 +1,28 @@
+{
+  "name": "fixiebot",
+  "version": "1.0.0",
+  "description": "Handles complex fixed-gear drivetrain conversions on the fly for redditors.",
+  "main": "index.js",
+  "scripts": {
+    "test": "run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TyStelmach/FixieBot.git"
+  },
+  "keywords": [
+    "bot"
+  ],
+  "author": "Ty Stelmach",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TyStelmach/FixieBot/issues"
+  },
+  "homepage": "https://github.com/TyStelmach/FixieBot#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "path": "^0.12.7",
+    "snoostorm": "^1.5.2",
+    "snoowrap": "^1.22.0"
+  }
+}
