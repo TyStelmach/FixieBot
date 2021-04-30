@@ -3,97 +3,56 @@ const Snoowrap = require('snoowrap');
 const { CommentStream } = require('snoostorm');
 const path = require('path');
 const env = require('dotenv').config({ path: path.resolve(__dirname, '../.env') }).parsed;
-const equations = require('./lib/equations');
+const equations = require('./lib/equation');
+const validations = require('./lib/validation');
+const writeReply = require('./lib/response');
 
 const client = new Snoowrap({
-    userAgent: env.username,
-    clientId: env.clientId,
-    clientSecret: env.clientSecret,
-    username: env.username,
-    password: env.password
+  userAgent: env.username,
+  clientId: env.clientId,
+  clientSecret: env.clientSecret,
+  username: env.username,
+  password: env.password
 });
 
+const parseComments = (client) => {
+  const botStartedTime = Date.now() / 1000;
+  const comments = new CommentStream(client, {
+    subreddit: "testingground4bots",
+    limit: 10,
+    pollTime: 2000,
+  });
 
-const checkForMentions = (comment) => {
-	const { body } = comment;
-	if (body && body.toLowerCase().includes(`/u/${env.username}`)) {
-		return true;
-	};
-};
+  comments.on('item', comment => {
+    const botWasInvoked = validations.checkForMention(comment, env.username);
+    const commentedAfterStart = comment.created_utc > botStartedTime;
 
-const checkForCommand = (comment) => {
-	// FIXME: Check for 2 comma seperated numbers, empty parens will validate
-	const regex = new RegExp(`(?<=ratio\\().*(?=\\))`, 'igm');
-	return comment.body.match(regex);
+    if (botWasInvoked && commentedAfterStart) {
+      const commandWasPassed = validations.checkForCommand(comment) ? true : false;
+      if (commandWasPassed) {
+        const drivetrains = equations.getRatios(comment);
+        if (drivetrains.length > 0) {
+          const { author, locked } = comment;
+          const authorRef = `/u/${author.name}`;
+          let response;
+
+          if (!locked) {
+            drivetrains.forEach(drivetrain => {
+              const intro = writeReply.writeIntro(authorRef);
+              const body = writeReply.writeTechnicalInfo(drivetrain);
+              const outro = writeReply.writeOutro();
+              response = `${intro}\n ${body}\n ${outro}`;
+            });
+
+            comment.reply(response);
+          }
+        }
+      }
+    }
+  })
 }
 
-const getRatios = (comment) => {
-	const passedRatios = checkForCommand(comment);
-	
-	const drivetrains = passedRatios.map(gearSet => {
-		const ratio = gearSet.split(', ');
-		const chainring = parseInt(ratio[0]);
-		const cog = parseInt(ratio[1]);
-		
-		return {
-			chainring,
-			cog,
-			basicGearRatio: (chainring/cog).toFixed(2),
-			singleSkidPatch: equations.getSkidpatches(chainring, cog, false),
-			ambidexSkidPatch: equations.getSkidpatches(chainring, cog, true)
-		}
-	});
-	return drivetrains;
-}
-
-const writeResponse = ({chainring, cog, basicGearRatio, singleSkidPatch, ambidexSkidPatch}) => {
-	const html = `**Chainring(${chainring}) => Cog(${cog})**\n`+
-	`- *Gear Ratio*: **${basicGearRatio}** \n` +
-	`- *Skid Patches(Single Foot)*: **${singleSkidPatch}** \n` +
-	`- *Skid Patches(Ambidextrous)*: **${ambidexSkidPatch}** \n` +
-	`---`
-	return html;
-};
-
-const readSummonedComments = (client) => {
-	const BOT_RUN = Date.now() / 1000;
-
-	const comments = new CommentStream(client, {
-			subreddit: "testingground4bots",
-			limit: 10,
-			pollTime: 2000,
-	});
-
-	comments.on('item', item => {
-		const botWasSummoned =  checkForMentions(item);
-		const commentedAfterRun = item.created_utc > BOT_RUN;
-
-		// Commented after bot was run && bot was summoned via /u/ params
-		if (botWasSummoned && commentedAfterRun) {
-			const commandWasPassed = checkForCommand(item) ? true : false;
-			if (commandWasPassed) {
-				// Start getting calculations
-				const drivetrainsArr = getRatios(item);
-				if (drivetrainsArr) {
-					const { author, locked } = item;
-					const replyStatements = [];
-					const greeting = `Hey [/u/${author.name}](https://www.reddit.com/user/${author.name}), this is what I figuered out about your gears: \n`;
-					let response;
-					const closing = '*beep - boop* I am a bot created by... for more information about fixed gear skidpatches and rations, check out these links...'
-					if (!locked) {
-						drivetrainsArr.forEach(drivetrain => {
-							response = writeResponse(drivetrain);
-						});
-
-						item.reply(`${greeting}\n` + `${response}\n` + `${closing}`);
-					}
-				}
-			}
-		}
-	});    
-};
-
-readSummonedComments(client);
+parseComments(client);
 
 // Order of operations
 // 1. Check for comment streams that contain my name

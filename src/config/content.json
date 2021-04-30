@@ -1,0 +1,16 @@
+{
+  "intro": {
+    "greeting": "Hey there",
+    "phrase": "here is what I found about your gear ratio"
+  },
+  "technical": {
+    "chainring": "Chainring",
+    "cog": "Cog",
+    "gearRatio": "Gear Ratio",
+    "skidPatches": "Skid Patches(Single Foot)",
+    "ambiSkidPatches": "Skid Patches(Ambidextrous)"
+  },
+  "conclusion": {
+    "iAmA": "Beep - boop, I am a bot created by" 
+  }
+}
