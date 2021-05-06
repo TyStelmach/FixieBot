@@ -2,7 +2,7 @@ const content = require('../config/content.json');
 
 const responses = {
   writeIntro: (author) => {
-    return `${content.intro.greeting} ${author}, ${content.intro.phrase} \n`
+    return `${content.intro.greeting} /u/${author}, ${content.intro.phrase} \n`
   },
   writeTechnicalInfo: ({ chainring, cog, basicGearRatio, singleSkidPatch, ambidexSkidPatch }) => {
     const headingString = `**${content.technical.chainring}(${chainring}) => ${content.technical.cog}(${cog})**`;

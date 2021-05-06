@@ -1,4 +1,3 @@
-const fs = require('fs');
 const Snoowrap = require('snoowrap');
 const { CommentStream } = require('snoostorm');
 const path = require('path');
@@ -6,6 +5,7 @@ const env = require('dotenv').config({ path: path.resolve(__dirname, '../.env') 
 const equations = require('./lib/equation');
 const validations = require('./lib/validation');
 const writeReply = require('./lib/response');
+const logger = require("./lib/logger").Logger;
 
 const client = new Snoowrap({
   userAgent: env.username,
@@ -15,7 +15,9 @@ const client = new Snoowrap({
   password: env.password
 });
 
+
 const parseComments = (client) => {
+  logger.info(`FixieBot was started`);
   const botStartedTime = Date.now() / 1000;
   const comments = new CommentStream(client, {
     subreddit: "testingground4bots",
@@ -24,39 +26,36 @@ const parseComments = (client) => {
   });
 
   comments.on('item', comment => {
-    const botWasInvoked = validations.checkForMention(comment, env.username);
-    const commentedAfterStart = comment.created_utc > botStartedTime;
+    const {id, created_utc, body, author, locked, link_url} = comment;
+    const botWasInvoked = validations.checkForMention(body, env.username);
+    const commentedAfterStart = created_utc > botStartedTime;
 
     if (botWasInvoked && commentedAfterStart) {
-      const commandWasPassed = validations.checkForCommand(comment) ? true : false;
+      logger.info(`FixieBot was called by /u/${author.name}`);
+      const commandWasPassed = validations.checkForCommand(body) ? true : false;
       if (commandWasPassed) {
-        const drivetrains = equations.getRatios(comment);
+        const drivetrains = equations.getRatios(body);
         if (drivetrains.length > 0) {
-          const { author, locked } = comment;
-          const authorRef = `/u/${author.name}`;
           let response;
 
           if (!locked) {
             drivetrains.forEach(drivetrain => {
-              const intro = writeReply.writeIntro(authorRef);
-              const body = writeReply.writeTechnicalInfo(drivetrain);
-              const outro = writeReply.writeOutro();
-              response = `${intro}\n ${body}\n ${outro}`;
+              const replyIntro = writeReply.writeIntro(author.name);
+              const replyBody = writeReply.writeTechnicalInfo(drivetrain);
+              const replyOutro = writeReply.writeOutro();
+              response = `${replyIntro}\n ${replyBody}\n ${replyOutro}`;
             });
 
             comment.reply(response);
+            logger.info(`FixieBot replied to /u/${author.name} -- ${link_url}${id}`);
           }
         }
+      } else {
+        logger.info(`ERROR: /u/${author.name} did not list a command`);
       }
     }
   })
 }
 
 parseComments(client);
-
-// Order of operations
-// 1. Check for comment streams that contain my name
-// 2. Validate the request (are they asking for x/y/z) / check if already replied
-// 3. Run gear calcs and store as variables
-// 4. Mush it together to make a comment - reply with a tag
 
