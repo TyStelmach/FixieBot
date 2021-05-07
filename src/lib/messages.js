@@ -1,4 +1,3 @@
-// messages.js
 const content = require('../config/content.json');
 const equations = require('./equations.js');
 const logger = require("./logger").Logger;
