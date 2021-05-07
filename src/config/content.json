@@ -1,0 +1,16 @@
+{
+  "intro": {
+    "greeting": "Hey there",
+    "phrase": "here are my calculations: "
+  },
+  "technical": {
+    "chainring": "Chainring",
+    "cog": "Cog",
+    "gearRatio": "Gear Ratio",
+    "skidPatches": "Skid Patches(Single Foot)",
+    "ambiSkidPatches": "Skid Patches(Ambidextrous)"
+  },
+  "outro": {
+    "phrase": "Beep - boop, I am a bot created by [/u/ChainGretzky](https://www.reddit.com/user/chaingretzky), you can view my [source](https://github.com/TyStelmach/FixieBot) on GitHub." 
+  }
+}
