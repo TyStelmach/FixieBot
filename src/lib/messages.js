@@ -16,7 +16,7 @@ const formatReply = (id, author, commandPassed) => {
 
   const replyIntro = `${content.intro.greeting} /u/${author.name}, ${content.intro.phrase}`;
   let replyBody = '';
-  const replyOutro = 'Outro...';
+  const replyOutro = content.outro.phrase;
 
   drivetrainValues.forEach(drivetrain => {
     const { chainring, cog, basicGearRatio, singleSkidPatch, ambidexSkidPatch } = drivetrain;
