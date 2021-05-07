@@ -1,7 +1,7 @@
 {
   "intro": {
     "greeting": "Hey there",
-    "phrase": "here is what I found about your gear ratio"
+    "phrase": "here are my calculations:"
   },
   "technical": {
     "chainring": "Chainring",
