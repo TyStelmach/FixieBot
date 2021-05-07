@@ -1,7 +1,7 @@
 {
   "intro": {
     "greeting": "Hey there",
-    "phrase": "here are my calculations:"
+    "phrase": "here are my calculations: "
   },
   "technical": {
     "chainring": "Chainring",
@@ -11,6 +11,6 @@
     "ambiSkidPatches": "Skid Patches(Ambidextrous)"
   },
   "conclusion": {
-    "iAmA": "Beep - boop, I am a bot created by" 
+    "iAmA": "Beep - boop, I am a bot created by [/u/ChainGretzky](https://www.reddit.com/user/chaingretzky), you can view my [source](https://github.com/TyStelmach/FixieBot) on GitHub." 
   }
 }
