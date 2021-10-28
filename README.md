@@ -7,7 +7,7 @@ FixieBot is a reddit auto-reply bot based off of Node that searches for comments
 FixieBot will respond to the following command:
 - `Ratio(#, #)`
 
-Ratio accpets to numbers as paramaters, this is your bike's chainring and cog sizes -- `Ratio(49, 17)` then FixieBot will return calculations to give you a gear ratio and information on your tire skidpatches.
+Ratio accepts two numbers as paramaters, this is your bike's chainring and cog sizes -- `Ratio(49, 17)` then FixieBot will return calculations to give you a gear ratio and information on your tire skidpatches.
 
 FixieBot can accept many ratios at once and will seperate out the response to accomodate them. For every `Ratio(#, #)` that is passed, it will calculate it. (See future improvments).
 
